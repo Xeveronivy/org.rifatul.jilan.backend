@@ -1,17 +1,22 @@
 package org.sapto.model;
 
 public class Author {
-    public static Object getAuthorName() {
-        return null;
+    public Integer authorId;
+    public String authorName;
+
+    public Integer getAuthorId() {
+        return authorId;
     }
 
-    public void setAuthorId(int author_id) {
+    public void setAuthorId(Integer authorId) {
+        this.authorId = authorId;
     }
 
-    public void setAuthorName(String author_name) {
+    public String getAuthorName() {
+        return authorName;
     }
 
-    public static Integer getAuthorId() {
-        return null;
+    public void setAuthorName(String authorName) {
+        this.authorName = authorName;
     }
 }

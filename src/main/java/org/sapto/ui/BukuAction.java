@@ -1,13 +1,17 @@
     package org.sapto.ui;
 
+    import org.sapto.model.Author;
     import org.sapto.model.Publisher;
     import org.sapto.services.BukuService;
     import org.springframework.beans.factory.annotation.Autowired;
+    import org.springframework.http.HttpEntity;
     import org.springframework.http.HttpStatus;
     import org.springframework.http.ResponseEntity;
     import org.springframework.stereotype.Controller;
     import org.springframework.ui.ModelMap;
     import org.springframework.web.bind.annotation.*;
+    import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+    import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
     import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
     import javax.servlet.http.HttpServletRequest;
@@ -59,15 +63,15 @@
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
             }
 
-            }
+        }
 
-            @GetMapping("/api/editelem1/{id}")
-            public ResponseEntity<Publisher> PublisherAll(@PathVariable Integer id) {
-                return ResponseEntity.ok(bukuService.getPublisher(id));
-            }
+        @GetMapping("/api/editelem1/{id}")
+        public ResponseEntity<Publisher> PublisherAll(@PathVariable Integer id) {
+            return ResponseEntity.ok(bukuService.getPublisher(id));
+        }
 
         @PostMapping("/api/simpanPublisher")
-        public ResponseEntity  <Map<String,Object>> savePublisher(@RequestBody Publisher publisher) {
+        public ResponseEntity<Map<String, Object>> savePublisher(@RequestBody Publisher publisher) {
             bukuService.simpanPublisher(publisher);
             Map<String, Object> map = new HashMap<>();
             map.put("kode", 200);
@@ -75,4 +79,20 @@
             bukuService.simpanPublisher(publisher);
             return ResponseEntity.ok(map);
         }
+
+        @GetMapping("/api/Author/{id}")
+        public ResponseEntity<Author> authorAll(@PathVariable Integer id) {
+            return ResponseEntity.ok((bukuService.getAuthor(id)));
+
         }
+
+        @GetMapping("/api/author")
+        public ResponseEntity<List<Author>> authorAll() {
+            try {
+                return ResponseEntity.ok(bukuService.getAuthorAll());
+            } catch (SQLException e) {
+                e.printStackTrace();
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+            }
+        }
+    }

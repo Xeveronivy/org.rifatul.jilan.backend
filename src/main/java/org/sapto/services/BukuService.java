@@ -21,4 +21,8 @@ public interface BukuService {
 
     List<Author> getAuthorAll() throws SQLException;
 
+    Author getAuthorAll(Integer id);
+
+    Integer simpanAuthor(Author author);
+
 }

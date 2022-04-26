@@ -1,12 +1,15 @@
 package org.sapto.services;
 
 import org.sapto.model.Author;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.sapto.model.Buku;
 import org.sapto.model.Publisher;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import org.springframework.web.bind.annotation.GetMapping;
 
 import javax.sql.DataSource;
 import java.sql.*;
@@ -15,13 +18,16 @@ import java.util.List;
 
 @Repository
 public class BukuImpl implements BukuService {
-    private Buku buku;
 
     @Autowired
     private DataSource dataSource;
 
     @Autowired
     private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
+
+    public BukuImpl() throws SQLException{
+
+    }
 
     @Override
     public Buku getDataBuku(int id) throws SQLException {
@@ -130,31 +136,6 @@ public class BukuImpl implements BukuService {
     }
 
 
-    public List<Author> getAuthorAll() throws SQLException {
-        String sql = "SELECT author_id, author_name FROM author";
-        return namedParameterJdbcTemplate.query(sql, (rs, rn) -> {
-            Author author = new Author();
-            author.setAuthorId(rs.getInt("author_id"));
-            author.setAuthorName(rs.getString("author_name"));
-            return author;
-
-        });
-
-    }
-
-
-        public Author getAuthor (Integer id){
-            String sql = "SELECT author_id, author_name FROM where author_id =:id";
-            MapSqlParameterSource map = new MapSqlParameterSource();
-            map.addValue("id", id);
-            return namedParameterJdbcTemplate.queryForObject(sql, map, (rs, rn) -> {
-                Author author = new Author();
-                author.setAuthorId(rs.getInt("author_id"));
-                author.setAuthorName(rs.getString("author_name"));
-                return author;
-            });
-        }
-
 
     public Integer simpanPublisher(Publisher publisher) {
         String sql = " INSERT INTO publisher (publisher_id, publisher_name)" +
@@ -167,16 +148,47 @@ public class BukuImpl implements BukuService {
         return publisher.getPublisherId();
     }
 
-
-    public Integer simpanAuthor(Author author){
-        String sql = " INSERT INTO public.author(\n" +
-                "\tauthor_id, author_name)\n" +
-                "\tVALUES (?, ?)";
-        MapSqlParameterSource map = new MapSqlParameterSource();
-        map.addValue("author_id",Author.getAuthorId());
-        map.addValue("author_name",Author.getAuthorName());
-        namedParameterJdbcTemplate.update(sql,map);
-
-        return author.getAuthorId();
+    @Override
+    public org.sapto.model.Author getAuthorAll(Integer id) {
+        return null;
     }
-}
+
+    @Override
+    public List<Author> getAuthorAll() throws SQLException {
+        String sql = "SELECT author_id, author_name FROM author";
+        return namedParameterJdbcTemplate.query(sql, (rs, rn) -> {
+
+            Author author = new Author();
+            author.setAuthorId(rs.getInt("author_id"));
+            author.setAuthorName(rs.getString("author_name"));
+            return author;
+        });
+    }
+
+
+    @Override
+    public Integer simpanAuthor(Author author) {
+        String sql = "INSERT INTO author (author_id, author_name)" + "VALUES(:author_id, :author_name)";
+        MapSqlParameterSource map = new MapSqlParameterSource();
+        map.addValue("author_id", author.getAuthorId());
+        map.addValue("author_name", author.getAuthorName());
+        namedParameterJdbcTemplate.update(sql,map);
+        return author.getAuthorId();
+
+    }
+
+
+        @Override
+        public Author getAuthor(Integer id) {
+            String sql = "SELECT author_id, author_name FROM author    where author_id = :id";
+            MapSqlParameterSource map = new MapSqlParameterSource();
+            map.addValue("id", id);
+            return namedParameterJdbcTemplate.queryForObject(sql, map, (rs, rn) -> {
+                Author author = new Author();
+                author.setAuthorId(rs.getInt("author_id"));
+                author.setAuthorName(rs.getString("author_name"));
+                return author;
+            });
+
+        }
+    }
